@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useRef } from 'react';
+import styled from 'styled-components';
 import './App.css';
+import { ControlBar } from './components/ControlBar';
+import { Layout } from './components/Layout';
+import { Video } from './components/Video';
+import useWebRTC from './hooks/useWebRTC';
+import { StyledVideoContainer } from './components/Video/Video';
+
+const StyledBodyApp = styled.div``
 
 function App() {
+  const video1Ref = useRef<any>(null)
+  const video2Ref = useRef<any>(null)
+  const { onCreateRoom, onJoinRoom, onOpenMedia, context, status, onHangUp } = useWebRTC([video1Ref, video2Ref])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <StyledBodyApp>
+        <StyledVideoContainer>
+          <Video elmRef={video1Ref} isLocal/>
+          <Video elmRef={video2Ref} yourFriendJoined={context.yourFriendJoined}/>
+        </StyledVideoContainer>
+      </StyledBodyApp>
+
+      <ControlBar
+        context={context}
+        onOpenVideo={onOpenMedia}
+        status={status}
+        createRoom={onCreateRoom}
+        onJoinRoom={onJoinRoom}
+        onHangup={onHangUp}
+      />
+    </Layout>
   );
 }
 
